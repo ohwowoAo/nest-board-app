@@ -35,4 +35,9 @@ export class BoardsService {
     const found = this.getBoardById(id);
     this.boards = this.boards.filter((board) => board.id !== found.id);
   }
+  updateBoardStatus(id: string, status: BoardStatus): Board {
+    const board = this.getBoardById(id);
+    board.status = status;
+    return board;
+  }
 }
