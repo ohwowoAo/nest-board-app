@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { BoardsModule } from './boards/boards.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './boards/configs/typeorm.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
       useFactory: typeORMConfig,
-      inject: [], // Add ConfigService if needed, e.g., [ConfigService]
     }),
     BoardsModule
   ],
