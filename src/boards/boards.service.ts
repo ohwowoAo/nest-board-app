@@ -30,6 +30,13 @@ export class BoardsService {
     } 
   }
 
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.getBoardById(id);    
+    board.status = status;
+    await this.boardRepo.save(board);
+    return board;
+  }
+
   async getBoardById(id: number): Promise<Board> {
     const found = await this.boardRepo.findOne({ where: { id } });
     if (!found) {
