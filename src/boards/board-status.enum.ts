@@ -3,3 +3,4 @@ export enum BoardStatus {
   PUBLIC = 'PUBLIC', // 공개 게시판
   PRIVATE = 'PRIVATE', // 비공개 게시판
 }
+
