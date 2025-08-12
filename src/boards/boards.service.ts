@@ -13,6 +13,18 @@ export class BoardsService {
   @InjectRepository(Board)
     private readonly boardRepo: Repository<Board>,
   ) {}
+  
+  async getAllBoards(): Promise<Board[]> {
+    return this.boardRepo.find();
+  } 
+
+ async getBoardById(id: number): Promise<Board> {
+    const found = await this.boardRepo.findOne({ where: { id } });
+    if (!found) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    }
+    return found;
+  }
 
   async createBoard(dto: CreateBoardDto): Promise<Board> {
     const entity = this.boardRepo.create({
@@ -36,12 +48,5 @@ export class BoardsService {
     await this.boardRepo.save(board);
     return board;
   }
-
-  async getBoardById(id: number): Promise<Board> {
-    const found = await this.boardRepo.findOne({ where: { id } });
-    if (!found) {
-      throw new NotFoundException(`Can't find Board with id ${id}`);
-    }
-    return found;
-  }
+ 
 }

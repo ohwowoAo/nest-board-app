@@ -19,19 +19,14 @@ import { Board } from './board.entity';
 
 @Controller('boards')
 export class BoardsController {
-  // boardsService: any;
   constructor(private readonly boardsService: BoardsService) {}
 
-  // @Get('/')
-  // getAllBoards(): Board[] {
-  //   return this.boardsService.getAllBoards();
-  // }
+  
+  @Get()
+  getAllBoard(): Promise<Board[]> {
+    return this.boardsService.getAllBoards();
+  }
 
-  // @Post()
-  // @UsePipes(ValidationPipe)
-  // createBoard(@Body() createBoardDto: CreateBoardDto): Board {
-  //   return this.boardsService.createBoard(createBoardDto);
-  // }
   @Post()
   @UsePipes(ValidationPipe) // DTO에 정의된 유효성 검사 적용
   createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
@@ -43,10 +38,6 @@ export class BoardsController {
   getBoardById(@Param('id') id: number): Promise<Board> {
     return this.boardsService.getBoardById(id);
   }
-  // @Get('/:id')
-  // getBoardById(@Param('id') id: string): Board {
-  //   return this.boardsService.getBoardById(id);
-  // }
 
   @Delete('/:id')
   deleteBoard(@Param('id', ParseIntPipe) id): Promise<void> {
