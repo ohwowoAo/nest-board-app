@@ -3,6 +3,7 @@ import { BoardsModule } from './boards/boards.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './boards/configs/typeorm.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { typeORMConfig } from './boards/configs/typeorm.config';
       inject: [ConfigService],
       useFactory: typeORMConfig,
     }),
-    BoardsModule
+    BoardsModule,
+    AuthModule
   ],
 })
 export class AppModule {}
