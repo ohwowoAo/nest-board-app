@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { Repository } from 'typeorm';
@@ -12,8 +12,8 @@ export class AuthService {
         private readonly userRepo: Repository<User>,
     ){}
 
-    async signUp(dto: AuthCredentialDto): Promise<User> {
-      const { username, password } = dto;
+    async signUp(authCredentialDto: AuthCredentialDto): Promise<User> {
+      const { username, password } = authCredentialDto;
 
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
@@ -30,5 +30,22 @@ export class AuthService {
               throw new InternalServerErrorException('회원가입 중 오류가 발생했습니다.');
             }
           }
+    }
+
+    async signIn(authCredentialDto: AuthCredentialDto): Promise<string> {
+      const { username, password } = authCredentialDto;
+        console.log('📥 payload:', { username, password });
+
+      const user = await this.userRepo.findOne({ where: { username } });
+        console.log('🗄️  db user:', user?.id, user?.username, user?.password?.slice(0, 10));
+
+
+      if (!user) throw new UnauthorizedException('로그인 실패: 사용자 없음');
+
+      const match = await bcrypt.compare(password, user.password);
+      console.log('🔐 compare result:', match);
+
+      if (match) return '로그인 성공';
+      throw new UnauthorizedException('로그인 실패: 잘못된 username 또는 password입니다.');
     }
 }
