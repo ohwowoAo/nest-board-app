@@ -8,6 +8,6 @@ export class User extends BaseEntity {
   @Column({ unique: true, length: 20 })
   username: string;
 
-  @Column({ length: 20 })
+  @Column({ length: 200 })
   password: string;
 }   
