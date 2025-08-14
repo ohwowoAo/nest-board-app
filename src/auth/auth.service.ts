@@ -34,16 +34,10 @@ export class AuthService {
 
     async signIn(authCredentialDto: AuthCredentialDto): Promise<string> {
       const { username, password } = authCredentialDto;
-        console.log('📥 payload:', { username, password });
-
       const user = await this.userRepo.findOne({ where: { username } });
-        console.log('🗄️  db user:', user?.id, user?.username, user?.password?.slice(0, 10));
-
-
       if (!user) throw new UnauthorizedException('로그인 실패: 사용자 없음');
 
       const match = await bcrypt.compare(password, user.password);
-      console.log('🔐 compare result:', match);
 
       if (match) return '로그인 성공';
       throw new UnauthorizedException('로그인 실패: 잘못된 username 또는 password입니다.');
