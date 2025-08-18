@@ -6,17 +6,24 @@ import { User } from './user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { ConfigService } from '@nestjs/config';
+
+console.log('JWT_SECRET (module):', process.env.JWT_SECRET || 'dev-secret');
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'defaultSecretKey',
-      signOptions: { expiresIn: '1h' }, // 토큰 만료 시간
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (cfg: ConfigService) => ({
+        secret: cfg.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: cfg.get<string>('JWT_EXPIRES_IN') || '1h' },
+      }),
     }),
-    TypeOrmModule.forFeature([User])],  
+  ],
+  providers: [AuthService, JwtStrategy],     
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [JwtStrategy, PassportModule] // JwtStrategy와 PassportModule을 다른 모듈에서 사용할 수 있도록 export
+  exports: [PassportModule, JwtModule],     
 })
 export class AuthModule {}

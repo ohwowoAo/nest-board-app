@@ -44,8 +44,7 @@ export class AuthService {
       if (match) {
         //유저토큰생성 (secret + payload)
         const payload = { username: user.username };
-        const accessToken = this.jwtService.sign(payload);        
-
+        const accessToken = this.jwtService.sign(payload);      
       
         return { accessToken};
       }
