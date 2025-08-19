@@ -40,6 +40,12 @@ export class BoardsController {
     return this.boardsService.createBoard(createBoardDto, user);
   }
 
+  @Get('me')
+  getUserBoard(
+    @GetUser() user: User, // 현재 로그인한 유저 정보 가져오기
+  ): Promise<Board[]> {
+    return this.boardsService.getUserBoards(user);
+  }
 
   @Get('/:id')
   getBoardById(@Param('id') id: number): Promise<Board> {
@@ -47,8 +53,8 @@ export class BoardsController {
   }
 
   @Delete('/:id')
-  deleteBoard(@Param('id', ParseIntPipe) id): Promise<void> {
-    return this.boardsService.deleteBoard(id);
+  deleteBoard(@Param('id', ParseIntPipe) id, @GetUser() user: User ): Promise<void> {
+    return this.boardsService.deleteBoard(id, user);
   }
 
   @Patch('/:id/status')
@@ -58,4 +64,6 @@ export class BoardsController {
   ) {
     return this.boardsService.updateBoardStatus(id, status);
   }
+
+
 }

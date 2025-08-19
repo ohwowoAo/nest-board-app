@@ -37,8 +37,8 @@ export class BoardsService {
     return this.boardRepo.save(entity);
   }
 
-  async deleteBoard(id: number): Promise<void> {
-    const result = await this.boardRepo.delete(id);
+  async deleteBoard(id: number, user: User): Promise<void> {
+    const result = await this.boardRepo.delete({id, user});
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     } 
@@ -50,5 +50,11 @@ export class BoardsService {
     await this.boardRepo.save(board);
     return board;
   }
- 
+
+  async getUserBoards(user: User): Promise<Board[]> {
+    return this.boardRepo.find({
+      where: { user }, // user 기준으로 검색
+    });
+  }
+
 }
