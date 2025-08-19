@@ -18,6 +18,8 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 import { Board } from './board.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('boards')
@@ -32,8 +34,10 @@ export class BoardsController {
 
   @Post()
   @UsePipes(ValidationPipe) // DTO에 정의된 유효성 검사 적용
-  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardsService.createBoard(createBoardDto);
+  createBoard(@Body() createBoardDto: CreateBoardDto,
+  @GetUser() user: User,
+  ): Promise<Board> {
+    return this.boardsService.createBoard(createBoardDto, user);
   }
 
 
