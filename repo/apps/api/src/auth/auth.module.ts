@@ -8,8 +8,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 
-console.log('JWT_SECRET (module):', process.env.JWT_SECRET || 'dev-secret');
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -18,7 +16,7 @@ console.log('JWT_SECRET (module):', process.env.JWT_SECRET || 'dev-secret');
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => ({
         secret: cfg.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: cfg.get<string>('JWT_EXPIRES_IN') || '1h' },
+        signOptions: { expiresIn: cfg.get<string>('JWT_EXPIRES_IN') },
       }),
     }),
   ],

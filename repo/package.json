@@ -1,0 +1,16 @@
+{
+  "name": "nest-board-app",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n web,api -c auto \"npm run -w @app/web dev\" \"npm run -w @app/api start:dev\"",
+    "build": "npm run -w @app/web build && npm run -w @app/api build",
+    "lint": "npm run -w @app/web lint && npm run -w @app/api lint"
+  }
+}
