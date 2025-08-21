@@ -6,11 +6,17 @@
     "packages/*"
   ],
   "devDependencies": {
-    "concurrently": "^9.0.0"
+    "concurrently": "^9.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2"
   },
   "scripts": {
     "dev": "concurrently -n web,api -c auto \"npm run -w @app/web dev\" \"npm run -w @app/api start:dev\"",
     "build": "npm run -w @app/web build && npm run -w @app/api build",
     "lint": "npm run -w @app/web lint && npm run -w @app/api lint"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.85.5"
   }
 }

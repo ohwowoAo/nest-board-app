@@ -12,5 +12,5 @@ export const typeORMConfig = (configService: ConfigService): TypeOrmModuleOption
   synchronize: configService.get<string>('NODE_ENV') !== 'production', // 운영에서는 false
   logging: ['query', 'error', 'warn'],
   charset: 'utf8mb4_general_ci',
-  autoLoadEntities: true,    
+  autoLoadEntities: true,
 });
