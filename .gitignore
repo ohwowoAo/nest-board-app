@@ -3,6 +3,7 @@
 /node_modules
 /apps/*/node_modules
 /build
+.next/
 
 # 빌드 결과물
 dist/
