@@ -22,6 +22,7 @@ export default [
       '**/out/**',
       '**/build/**',
       '**/*.d.ts',
+      'apps/web/tailwind.config.*',
     ],
   },
 
@@ -42,6 +43,7 @@ export default [
         project: path.join(__dirname, 'apps/web/tsconfig.json'),
         tsconfigRootDir: __dirname,
         sourceType: 'module',
+        parserOptions: { project: null },
       },
     },
   })),
