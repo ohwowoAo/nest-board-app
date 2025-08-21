@@ -43,7 +43,7 @@ export default [
         project: path.join(__dirname, 'apps/web/tsconfig.json'),
         tsconfigRootDir: __dirname,
         sourceType: 'module',
-        parserOptions: { project: null },
+        // parserOptions: { project: null },
       },
     },
   })),
@@ -56,7 +56,7 @@ export default [
       parser,
       globals: { ...globals.node, ...globals.jest },
       parserOptions: {
-        project: path.join(__dirname, 'apps/api/tsconfig.json'),
+        project: ['apps/api/tsconfig.json'],
         tsconfigRootDir: __dirname,
         sourceType: 'module',
         ecmaVersion: 2020,

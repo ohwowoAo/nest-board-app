@@ -1,4 +1,5 @@
-import { Body, Controller, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { User } from './user.entity';
@@ -16,15 +17,24 @@ export class AuthController {
   }
 
   @Post('/signin')
-  signIn(
-    @Body(ValidationPipe) authCredentialDto: AuthCredentialDto
-  ): Promise<{ accessToken: string }> {
-    return this.authService.signIn(authCredentialDto);
+  async signIn(
+    @Body(ValidationPipe) dto: AuthCredentialDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const { accessToken } = await this.authService.signIn(dto);
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 1000 * 60 * 60,
+    });
+    return { ok: true };
   }
 
-  @Post('/test')
-  @UseGuards(AuthGuard())
-  test(@GetUser() user: User) {
-    console.log('user', user);
-  }
+  // @Post('/test')
+  // @UseGuards(AuthGuard())
+  // test(@GetUser() user: User) {
+  //   console.log('user', user);
+  // }
 }

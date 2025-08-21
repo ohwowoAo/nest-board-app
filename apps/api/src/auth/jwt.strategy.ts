@@ -16,15 +16,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private cfg: ConfigService
+    private readonly cfg: ConfigService
   ) {
+    // 쿠키 추출기를 안전하게 타이핑
+    const cookieExtractor = (req: Request): string | null => {
+      const raw: unknown = (req as any)?.cookies?.access_token;
+      return typeof raw === 'string' && raw.length > 0 ? raw : null;
+    };
+
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
       secretOrKey: cfg.get<string>('JWT_SECRET', 'defaultSecretKey'),
       ignoreExpiration: false,
     });
   }
-
   async validate(payload: JwtPayload): Promise<User> {
     console.log('JWT validate payload:', payload);
     const { username } = payload;
