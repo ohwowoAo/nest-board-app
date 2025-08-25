@@ -1,24 +1,19 @@
-'use client';
+// apps/web/app/boards/page.tsx
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import BoardsList from '@/components/BoardsList';
 
-import { useBoards } from '@/lib/queries';
-import Link from 'next/link';
-
-export default function BoardsPage() {
-  const { data, isLoading, error } = useBoards();
-
-  if (isLoading) return <p>불러오는 중...</p>;
-  if (error) return <p>에러 발생: {(error as Error).message}</p>;
+export default async function BoardsPage() {
+  const cookieStore = await cookies();
+  if (!cookieStore.get('access_token')) {
+    redirect('/login');
+  }
 
   return (
-    <div>
-      <h1>게시글 목록</h1>
-      <ul>
-        {data?.map((board: any) => (
-          <li key={board.id}>
-            <Link href={`/boards/${board.id}`}>{board.title}</Link>
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 px-4 py-10">
+      <div className="mx-auto w-full max-w-3xl">
+        <BoardsList />
+      </div>
     </div>
   );
 }
