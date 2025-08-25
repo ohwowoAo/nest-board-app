@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import ToggleSwitch from '@/components/ToggleSwitch';
+import Link from 'next/link';
 
 type Board = {
   id: number;
@@ -48,7 +49,18 @@ export default function BoardsList() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-gray-900">보드</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900">보드</h1>
+          <Link
+            href="/boards/create"
+            aria-label="새 글 작성"
+            className="ml-1 inline-flex h-6 w-6 items-center justify-center mt-[-2px] rounded-full
+                       bg-gray-900 text-white transition hover:bg-gray-600
+                       focus-visible:outline-none "
+          >
+            <span className="text-2xl leading-none">+</span>
+          </Link>
+        </div>{' '}
         <ToggleSwitch checked={mine} onChange={setMine} />
       </div>
 
@@ -71,14 +83,16 @@ export default function BoardsList() {
             <ul className="grid gap-4 sm:grid-cols-2">
               {boards.map((b) => (
                 <li key={b.id} className="rounded-xl bg-white p-5 shadow ring-1 ring-slate-200">
-                  <h2 className="truncate text-lg font-semibold text-gray-900">{b.title}</h2>
-                  {b.description && (
-                    <p className="mt-1 line-clamp-2 text-sm text-gray-600">{b.description}</p>
-                  )}
-                  <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-                    <span className="rounded-full bg-slate-100 px-2 py-1">{b.status}</span>
-                    <span>#{b.id}</span>
-                  </div>
+                  <Link href={`/boards/${b.id}`}>
+                    <h2 className="truncate text-lg font-semibold text-gray-900">{b.title}</h2>
+                    {b.description && (
+                      <p className="mt-1 line-clamp-2 text-sm text-gray-600">{b.description}</p>
+                    )}
+                    <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                      <span className="rounded-full bg-slate-100 px-2 py-1">{b.status}</span>
+                      <span>#{b.id}</span>
+                    </div>
+                  </Link>
                 </li>
               ))}
             </ul>
