@@ -43,7 +43,7 @@ export default function SignupPage() {
     }
   };
 
-  const canSubmit = username.trim().length > 3 && password.trim().length >= 6 && !loading;
+  const canSubmit = username.trim().length > 3 && password.trim().length >= 4 && !loading;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 px-4">
