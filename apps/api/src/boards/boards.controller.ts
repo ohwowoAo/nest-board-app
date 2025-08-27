@@ -20,6 +20,7 @@ import { Board } from './board.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
+import { BoardDetailResponseDto } from './dto/board-detail-response.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('boards')
@@ -50,8 +51,16 @@ export class BoardsController {
   }
 
   @Get('/:id')
-  getBoardById(@Param('id') id: number): Promise<Board> {
-    return this.boardsService.getBoardById(id);
+  async getBoardById(@Param('id', ParseIntPipe) id: number): Promise<BoardDetailResponseDto> {
+    const board = await this.boardsService.getBoardById(id);
+    return {
+      id: board.id,
+      title: board.title,
+      description: board.description ?? null,
+      // content: board.content ?? null,
+      status: board.status as any,
+      username: board.user?.username ?? null, // ✅ 작성자 username
+    };
   }
 
   @Delete('/:id')

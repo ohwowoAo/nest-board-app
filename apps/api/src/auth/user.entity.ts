@@ -9,7 +9,7 @@ export class User extends BaseEntity {
   @Column({ unique: true, length: 20 })
   username: string;
 
-  @Column({ length: 200 })
+  @Column({ length: 200, select: false })
   password: string;
 
   @OneToMany(() => Board, (board) => board.user, { eager: true })

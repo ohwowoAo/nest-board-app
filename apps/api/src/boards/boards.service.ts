@@ -20,7 +20,7 @@ export class BoardsService {
   }
 
   async getBoardById(id: number): Promise<Board> {
-    const found = await this.boardRepo.findOne({ where: { id } });
+    const found = await this.boardRepo.findOne({ where: { id }, relations: { user: true } });
     if (!found) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     }
