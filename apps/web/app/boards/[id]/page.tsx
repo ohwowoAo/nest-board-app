@@ -1,68 +1,96 @@
+'use client';
+
 import Link from 'next/link';
-import { cookies, headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useBoardById } from '@/lib/queries';
+import { BoardStatus } from '@/types/board';
 
 type Board = {
   id: number;
   title: string;
   description?: string | null;
   content?: string | null;
-  status?: string;
+  status?: BoardStatus;
   userId?: number;
+  username?: string | null;
 };
 
-function cookieHeaderString(all: { name: string; value: string }[]) {
-  return all.map((c) => `${c.name}=${encodeURIComponent(c.value)}`).join('; ');
-}
+export default function BoardDetailPage() {
+  const params = useParams<{ id: string }>();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
-export default async function BoardDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+  const { data, isLoading, error } = useBoardById(id);
 
-  const cookieStore = await cookies();
-  if (!cookieStore.get('access_token')) redirect('/login');
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 px-4 py-10">
+        <div className="mx-auto w-full max-w-2xl animate-pulse">
+          <div className="mb-3 h-5 w-28 rounded bg-slate-300" />
+          <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
+            <div className="mb-3 h-8 w-2/3 rounded bg-slate-200" />
+            <div className="space-y-2">
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-3/4 rounded bg-slate-100" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const h = await headers();
-  const proto = h.get('x-forwarded-proto') ?? 'http';
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  const base = `${proto}://${host}`;
+  if (error)
+    return <p className="px-4 py-10 text-gray-600">에러: {String((error as Error).message)}</p>;
+  if (!data) return <p className="px-4 py-10 text-gray-600">게시글을 찾을 수 없습니다.</p>;
 
-  const res = await fetch(`${base}/api/boards/${id}`, {
-    headers: { cookie: cookieHeaderString(cookieStore.getAll()) },
-    cache: 'no-store',
-  });
-
-  if (res.status === 404) notFound();
-  if (!res.ok) redirect('/login');
-
-  const board = (await res.json()) as Board;
+  const board = data as Board;
   const body = board.description ?? board.content ?? '';
+  const authorLabel = board.username ?? '알 수 없음';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 px-4 py-10">
       <div className="mx-auto w-full max-w-2xl">
-        {/* 카드 밖 상단 바 */}
+        {/* 상단 바: 목록 / 상태 뱃지 / 수정 버튼 */}
         <div className="mb-3 flex items-center justify-between">
           <Link href="/boards" className="text-sm text-sky-700 hover:underline">
             ← 목록으로
           </Link>
-          {board.status && (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-gray-600 ring-1 ring-slate-200">
-              {board.status}
-            </span>
-          )}
+
+          <div className="flex items-center gap-2">
+            {board.status && (
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-gray-600 ring-1 ring-slate-200">
+                {board.status}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* 카드 본문 */}
         <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <h1 className="mb-3 text-2xl font-bold text-gray-900">{board.title}</h1>
+          <div className="flex justify-between items-start">
+            <h1 className="mb-1 text-2xl font-bold text-gray-900">{board.title}</h1>
+            <Link
+              href={`/boards/${board.id}/edit`}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              수정
+            </Link>
+          </div>
+
+          {/* ✅ 작성자 영역 */}
+          <div className="mb-4 text-sm text-gray-600">
+            작성자: <span className="font-medium text-gray-800">{authorLabel}</span>
+          </div>
+
           {body ? (
             <p className="whitespace-pre-wrap leading-7 text-gray-800">{body}</p>
           ) : (
             <p className="text-gray-500">내용이 없습니다.</p>
           )}
+
           <div className="mt-8 text-sm text-gray-500">
-            #{board.id}
-            {board.userId ? ` · 작성자: #${board.userId}` : ''}
+            보드 ID #{board.id && board.id}
+            {board.userId ? ` · 작성자 ID #${board.id && board.userId}` : ''}
           </div>
         </div>
       </div>
