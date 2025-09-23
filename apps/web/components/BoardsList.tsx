@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import ToggleSwitch from '@/components/ToggleSwitch';
 import Link from 'next/link';
+import { Lock } from 'lucide-react';
 
 type Board = {
   id: number;
@@ -81,20 +82,25 @@ export default function BoardsList() {
             </p>
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2">
-              {boards.map((b) => (
-                <li key={b.id} className="rounded-xl bg-white p-5 shadow ring-1 ring-slate-200">
-                  <Link href={`/boards/${b.id}`}>
-                    <h2 className="truncate text-lg font-semibold text-gray-900">{b.title}</h2>
-                    {b.description && (
-                      <p className="mt-1 line-clamp-2 text-sm text-gray-600">{b.description}</p>
-                    )}
-                    <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-                      <span className="rounded-full bg-slate-100 px-2 py-1">{b.status}</span>
-                      <span>#{b.id}</span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
+              {boards
+                .filter((b) => mine || b.status !== 'PRIVATE')
+                .map((b) => (
+                  <li key={b.id} className="rounded-xl bg-white p-5 shadow ring-1 ring-slate-200">
+                    <Link href={`/boards/${b.id}`}>
+                      <h2 className="truncate text-lg font-semibold text-gray-900 flex items-center gap-1">
+                        {b.title}
+                        {b.status === 'PRIVATE' && <Lock size={14} className="text-gray-500" />}
+                      </h2>
+                      {b.description && (
+                        <p className="mt-1 line-clamp-2 text-sm text-gray-600">{b.description}</p>
+                      )}
+                      <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                        <span className="rounded-full bg-slate-100 px-2 py-1">{b.status}</span>
+                        <span>#{b.id}</span>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
             </ul>
           )}
         </>
