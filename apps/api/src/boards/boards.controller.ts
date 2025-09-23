@@ -21,6 +21,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { BoardDetailResponseDto } from './dto/board-detail-response.dto';
+import { UpdateBoardDto } from './dto/update-board.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('boards')
@@ -66,6 +67,15 @@ export class BoardsController {
   @Delete('/:id')
   deleteBoard(@Param('id', ParseIntPipe) id, @GetUser() user: User): Promise<void> {
     return this.boardsService.deleteBoard(id, user);
+  }
+
+  @Patch('/:id')
+  async updateBoard(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateBoardDto: UpdateBoardDto,
+    @GetUser() user: User
+  ): Promise<Board> {
+    return this.boardsService.updateBoard(id, updateBoardDto, user);
   }
 
   @Patch('/:id/status')

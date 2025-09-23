@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './board.entity';
 import { Repository } from 'typeorm';
 import { User } from '../auth/user.entity';
+import { UpdateBoardDto } from './dto/update-board.dto';
 
 @Injectable()
 export class BoardsService {
@@ -31,7 +32,7 @@ export class BoardsService {
     const entity = this.boardRepo.create({
       title: createBoardDto.title,
       description: createBoardDto.description,
-      status: BoardStatus.PUBLIC,
+      status: createBoardDto.status ?? BoardStatus.PUBLIC,
       user, // 유저와 게시물 연결
     });
     return this.boardRepo.save(entity);
@@ -42,6 +43,17 @@ export class BoardsService {
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     }
+  }
+
+  async updateBoard(id: number, updateBoardDto: UpdateBoardDto, user: User): Promise<Board> {
+    const board = await this.boardRepo.findOne({ where: { id, user } });
+    if (!board) throw new NotFoundException('게시글을 찾을 수 없습니다.');
+
+    board.title = updateBoardDto.title ?? board.title;
+    board.description = updateBoardDto.description ?? board.description;
+    board.status = updateBoardDto.status ?? board.status;
+
+    return this.boardRepo.save(board);
   }
 
   async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
