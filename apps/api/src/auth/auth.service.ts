@@ -41,7 +41,10 @@ export class AuthService {
 
   async signIn(authCredentialDto: AuthCredentialDto): Promise<{ accessToken: string }> {
     const { username, password } = authCredentialDto;
-    const user = await this.userRepo.findOne({ where: { username } });
+    const user = await this.userRepo.findOne({
+      where: { username },
+      select: ['id', 'username', 'password'],
+    });
     if (!user) throw new UnauthorizedException('로그인 실패: 사용자 없음');
 
     const match = await bcrypt.compare(password, user.password);
