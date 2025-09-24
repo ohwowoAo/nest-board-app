@@ -23,8 +23,8 @@ export default function CreateBoardForm() {
     if (submitting) return;
     setSubmitting(true);
     setErr(null);
-
     try {
+      console.log('보내는 값:', { title, description, status });
       const res = await fetch('/api/boards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

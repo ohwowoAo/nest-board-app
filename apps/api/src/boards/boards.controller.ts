@@ -60,7 +60,7 @@ export class BoardsController {
       description: board.description ?? null,
       // content: board.content ?? null,
       status: board.status as any,
-      username: board.user?.username ?? null, // ✅ 작성자 username
+      username: board.user?.username ?? null,
     };
   }
 
