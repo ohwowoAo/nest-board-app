@@ -30,7 +30,6 @@ export class AuthService {
     try {
       return await this.userRepo.save(user);
     } catch (error: any) {
-      // MySQL에서 unique key 위반 시 코드: 'ER_DUP_ENTRY'
       if (error.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('이미 존재하는 username입니다.');
       } else {
@@ -39,7 +38,9 @@ export class AuthService {
     }
   }
 
-  async signIn(authCredentialDto: AuthCredentialDto): Promise<{ accessToken: string }> {
+  async signIn(
+    authCredentialDto: AuthCredentialDto
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const { username, password } = authCredentialDto;
     const user = await this.userRepo.findOne({
       where: { username },
@@ -48,14 +49,38 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('로그인 실패: 사용자 없음');
 
     const match = await bcrypt.compare(password, user.password);
+    if (!match)
+      throw new UnauthorizedException('로그인 실패: 잘못된 username 또는 password입니다.');
 
-    if (match) {
-      //유저토큰생성 (secret + payload)
-      const payload = { username: user.username };
-      const accessToken = this.jwtService.sign(payload);
+    const payload = { username: user.username, sub: user.id };
 
-      return { accessToken };
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '1h',
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '7d',
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  async refresh(refreshToken: string): Promise<{ accessToken: string }> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+
+      const newAccessToken = this.jwtService.sign(
+        { username: payload.username, sub: payload.sub },
+        { secret: process.env.JWT_SECRET, expiresIn: '1h' }
+      );
+
+      return { accessToken: newAccessToken };
+    } catch {
+      throw new UnauthorizedException('Refresh token invalid or expired');
     }
-    throw new UnauthorizedException('로그인 실패: 잘못된 username 또는 password입니다.');
   }
 }
