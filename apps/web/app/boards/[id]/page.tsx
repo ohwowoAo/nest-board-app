@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useBoardById } from '@/lib/queries';
 import { BoardStatus } from '@/types/board';
 import { useState } from 'react';
+import { Lock } from 'lucide-react';
 
 type Board = {
   id: number;
@@ -90,7 +91,10 @@ export default function BoardDetailPage() {
         {/* 카드 본문 */}
         <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
           <div className="flex justify-between items-start">
-            <h1 className="mb-1 text-2xl font-bold text-gray-900">{board.title}</h1>
+            <h1 className="mb-1 flex items-center gap-2 text-2xl font-bold text-gray-900">
+              {board.title}
+              {board.status === 'PRIVATE' && <Lock className="h-5 w-5 text-gray-500" />}
+            </h1>
             <div className="flex gap-2">
               <Link
                 href={`/boards/${board.id}/edit`}
