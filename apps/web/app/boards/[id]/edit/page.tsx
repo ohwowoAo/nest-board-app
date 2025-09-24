@@ -71,14 +71,6 @@ export default function EditBoardPage() {
                 {status}
               </span>
             )}
-            <button
-              type="submit"
-              form="edit-form" // ✅ 폼 submit으로 연결
-              disabled={isSaving}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSaving ? '저장 중…' : '저장'}
-            </button>
           </div>
         </div>
 
@@ -146,8 +138,9 @@ export default function EditBoardPage() {
             </Link>
             <button
               type="submit"
+              form="edit-form"
               disabled={isSaving}
-              className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-lg cursor-pointer border border-sky-600 bg-sky-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSaving ? '저장 중…' : '저장'}
             </button>
