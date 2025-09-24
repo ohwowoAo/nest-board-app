@@ -73,7 +73,6 @@ export default function BoardDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 px-4 py-10">
       <div className="mx-auto w-full max-w-2xl">
-        {/* 상단 바: 목록 / 상태 뱃지 / 수정 버튼 */}
         <div className="mb-3 flex items-center justify-between">
           <Link href="/boards" className="text-sm text-sky-700 hover:underline">
             ← 목록으로
