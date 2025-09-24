@@ -85,8 +85,8 @@ export default function BoardsList() {
               {boards
                 .filter((b) => mine || b.status !== 'PRIVATE')
                 .map((b) => (
-                  <li key={b.id} className="rounded-xl bg-white p-5 shadow ring-1 ring-slate-200">
-                    <Link href={`/boards/${b.id}`}>
+                  <li key={b.id} className="rounded-xl bg-white shadow ring-1 ring-slate-200">
+                    <Link href={`/boards/${b.id}`} className="p-5 block">
                       <h2 className="truncate text-lg font-semibold text-gray-900 flex items-center gap-1">
                         {b.title}
                         {b.status === 'PRIVATE' && <Lock size={14} className="text-gray-500" />}
