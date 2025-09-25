@@ -112,14 +112,14 @@ export default function CreateBoardForm() {
         <button
           type="button"
           onClick={() => history.back()}
-          className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-gray-700 hover:bg-slate-50"
+          className="rounded-lg cursor-pointer border border-slate-300 px-4 py-2 text-sm text-gray-700 hover:bg-slate-50"
         >
           취소
         </button>
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-lg bg-gray-900 px-4 py-2 text-sm text-white hover:bg-black disabled:opacity-60"
+          className="rounded-lg cursor-pointer border border-gray-900 bg-gray-900 px-4 py-2 text-sm text-white hover:bg-black disabled:opacity-60"
         >
           {submitting ? '저장 중…' : '저장'}
         </button>
