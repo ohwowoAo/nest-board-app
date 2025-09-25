@@ -54,4 +54,12 @@ export class AuthController {
   getMe(@GetUser() user: User) {
     return user;
   }
+
+  //로그아웃
+  @Post('/logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token', { path: '/' });
+    res.clearCookie('refresh_token', { path: '/' });
+    return { ok: true, message: '로그아웃 되었습니다.' };
+  }
 }
