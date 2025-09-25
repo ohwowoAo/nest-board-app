@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
-import { useBoardById } from '@/lib/queries';
+import { useBoardById, useMe } from '@/lib/queries';
 import { BoardStatus } from '@/types/board';
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
@@ -11,7 +11,6 @@ type Board = {
   id: number;
   title: string;
   description?: string | null;
-  content?: string | null;
   status?: BoardStatus;
   userId?: number;
   username?: string | null;
@@ -20,9 +19,10 @@ type Board = {
 export default function BoardDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const id: string = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const { data, isLoading, error } = useBoardById(id);
+  const { data: me } = useMe();
   const [isDeleting, setIsDeleting] = useState(false);
 
   if (isLoading) {
@@ -48,7 +48,7 @@ export default function BoardDetailPage() {
   if (!data) return <p className="px-4 py-10 text-gray-600">게시글을 찾을 수 없습니다.</p>;
 
   const board = data as Board;
-  const body = board.description ?? board.content ?? '';
+  const body = board.description ?? '';
   const authorLabel = board.username ?? '알 수 없음';
 
   /* 삭제 */
@@ -95,21 +95,24 @@ export default function BoardDetailPage() {
               {board.title}
               {board.status === 'PRIVATE' && <Lock className="h-5 w-5 text-gray-500" />}
             </h1>
-            <div className="flex gap-2">
-              <Link
-                href={`/boards/${board.id}/edit`}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-              >
-                수정
-              </Link>
-              <button
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="rounded-lg border cursor-pointer border-red-500 bg-red-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-red-600 disabled:opacity-50"
-              >
-                {isDeleting ? '삭제 중...' : '삭제'}
-              </button>
-            </div>
+
+            {me?.id === board.userId && (
+              <div className="flex gap-2">
+                <Link
+                  href={`/boards/${board.id}/edit`}
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+                >
+                  수정
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="rounded-lg border cursor-pointer border-red-500 bg-red-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-red-600 disabled:opacity-50"
+                >
+                  {isDeleting ? '삭제 중...' : '삭제'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* 작성자 영역 */}
@@ -123,10 +126,7 @@ export default function BoardDetailPage() {
             <p className="text-gray-500">내용이 없습니다.</p>
           )}
 
-          <div className="mt-8 text-sm text-gray-500">
-            보드 ID #{board.id && board.id}
-            {board.userId ? ` · 작성자 ID #${board.userId}` : ''}
-          </div>
+          <div className="mt-8 text-sm text-gray-500">보드 ID #{board.id}</div>
         </div>
       </div>
     </div>

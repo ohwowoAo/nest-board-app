@@ -31,9 +31,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
   async validate(payload: JwtPayload): Promise<User> {
-    console.log('JWT validate payload:', payload);
     const { username } = payload;
-    const user = await this.userRepository.findOne({ where: { username } });
+    const user = await this.userRepository.findOne({
+      where: { username },
+      select: ['id', 'username'],
+    });
     if (!user) {
       throw new UnauthorizedException('로그인 실패: 사용자 없음');
     }

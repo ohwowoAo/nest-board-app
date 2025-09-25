@@ -1,8 +1,10 @@
-import { Body, Controller, Post, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { User } from './user.entity';
+import { GetUser } from './get-user.decorator';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -45,5 +47,11 @@ export class AuthController {
   async refresh(@Body('refreshToken') refreshToken: string) {
     // AuthService로 위임
     return this.authService.refresh(refreshToken);
+  }
+
+  @Get('/me')
+  @UseGuards(JwtAuthGuard) // 로그인된 사용자만 접근 가능
+  getMe(@GetUser() user: User) {
+    return user;
   }
 }

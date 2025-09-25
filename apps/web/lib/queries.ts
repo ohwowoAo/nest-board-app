@@ -20,6 +20,15 @@ export const useBoardById = (id: string) => {
   });
 };
 
+// 현재 로그인된 사용자 가져오기
+export const useMe = () => {
+  return useQuery({
+    queryKey: ['me'],
+    queryFn: () => fetcher('/api/auth/me'),
+    retry: false, // 로그인 안 된 경우 불필요한 재시도 방지
+  });
+};
+
 //수정
 export const useUpdateBoard = () => {
   const qc = useQueryClient();
@@ -38,7 +47,6 @@ export const useUpdateBoard = () => {
       // 상세/목록 캐시 갱신
       qc.invalidateQueries({ queryKey: ['board', String(vars.id)] });
       qc.invalidateQueries({ queryKey: ['boards'] });
-      qc.invalidateQueries({ queryKey: ['myBoards'] }); // 쓰고 있다면
     },
   });
 };
