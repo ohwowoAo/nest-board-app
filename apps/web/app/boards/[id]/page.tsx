@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { useBoardById, useMe } from '@/lib/queries';
 import { BoardStatus } from '@/types/board';
-import { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Lock, MoreVertical } from 'lucide-react';
 
 type Board = {
   id: number;
@@ -24,6 +24,7 @@ export default function BoardDetailPage() {
   const { data, isLoading, error } = useBoardById(id);
   const { data: me } = useMe();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [open, setOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -42,10 +43,8 @@ export default function BoardDetailPage() {
       </div>
     );
   }
-
-  if (error)
-    return <p className="px-4 py-10 text-gray-600">에러: {String((error as Error).message)}</p>;
-  if (!data) return <p className="px-4 py-10 text-gray-600">게시글을 찾을 수 없습니다.</p>;
+  if (error) return <p>에러: {String((error as Error).message)}</p>;
+  if (!data) return <p>게시글을 찾을 수 없습니다.</p>;
 
   const board = data as Board;
   const body = board.description ?? '';
@@ -57,17 +56,15 @@ export default function BoardDetailPage() {
 
     try {
       setIsDeleting(true);
-      const res = await fetch(`/api/boards/${board.id}`, {
-        method: 'DELETE',
-      });
+      const res = await fetch(`/api/boards/${board.id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(await res.text());
-
       alert('게시글이 삭제되었습니다.');
       router.replace('/boards');
     } catch (err) {
-      alert('삭제 중 오류가 발생했습니다: ' + (err as Error).message);
+      alert('삭제 중 오류: ' + (err as Error).message);
     } finally {
       setIsDeleting(false);
+      setOpen(false);
     }
   };
 
@@ -90,33 +87,45 @@ export default function BoardDetailPage() {
 
         {/* 카드 본문 */}
         <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start relative">
             <h1 className="mb-1 flex items-center gap-2 text-2xl font-bold text-gray-900">
               {board.title}
               {board.status === 'PRIVATE' && <Lock className="h-5 w-5 text-gray-500" />}
             </h1>
 
             {me?.id === board.userId && (
-              <div className="flex gap-2">
-                <Link
-                  href={`/boards/${board.id}/edit`}
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-                >
-                  수정
-                </Link>
+              <div className="relative">
                 <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="rounded-lg border cursor-pointer border-red-500 bg-red-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-red-600 disabled:opacity-50"
+                  onClick={() => setOpen((prev) => !prev)}
+                  className="rounded p-2 hover:bg-slate-100 cursor-pointer"
                 >
-                  {isDeleting ? '삭제 중...' : '삭제'}
+                  <MoreVertical className="h-5 w-5 text-gray-600" />
                 </button>
+
+                {open && (
+                  <div className="absolute right-0 mt-2 w-24 overflow-hidden rounded-lg border bg-white shadow">
+                    <Link
+                      href={`/boards/${board.id}/edit`}
+                      className="block px-4 py-2 text-sm hover:bg-slate-50 text-gray-500"
+                      onClick={() => setOpen(false)}
+                    >
+                      수정
+                    </Link>
+                    <button
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="block cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-slate-50 disabled:opacity-50"
+                    >
+                      {isDeleting ? '삭제 중...' : '삭제'}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
           {/* 작성자 영역 */}
-          <div className="mb-4 text-sm text-gray-600">
+          <div className="mb-10 text-sm text-gray-600">
             작성자: <span className="font-medium text-gray-800">{authorLabel}</span>
           </div>
 
@@ -126,7 +135,7 @@ export default function BoardDetailPage() {
             <p className="text-gray-500">내용이 없습니다.</p>
           )}
 
-          <div className="mt-8 text-sm text-gray-500">보드 ID #{board.id}</div>
+          <div className="mt-10 text-sm text-gray-500">보드 ID #{board.id}</div>
         </div>
       </div>
     </div>
