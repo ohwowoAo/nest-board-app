@@ -39,6 +39,7 @@ export default async function fetcher(input: RequestInfo, init?: RequestInit) {
         credentials: 'include',
       });
     } else {
+      window.location.href = '/login';
       throw new Error('세션이 만료되었습니다. 다시 로그인 해주세요.');
     }
   }
