@@ -31,7 +31,7 @@ export class AuthController {
       maxAge: 1000 * 60 * 60, // 1시간
     });
 
-    // refresh_token 쿠키 저장 (길게)
+    // refresh_token 쿠키 저장
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       sameSite: 'lax',

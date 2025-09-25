@@ -3,7 +3,7 @@ import fetcher from './fetcher';
 import type { BoardStatus } from '@/types/board';
 import type { Board } from '@/types/board';
 
-// ✅ 게시판 목록 가져오기 예시
+// 게시판 목록 가져오기 예시
 export const useBoards = () => {
   return useQuery<Board[]>({
     queryKey: ['boards'],
@@ -11,7 +11,7 @@ export const useBoards = () => {
   });
 };
 
-// ✅ 게시글 상세 조회
+// 게시글 상세 조회
 export const useBoardById = (id: string) => {
   return useQuery<Board>({
     queryKey: ['board', id],
