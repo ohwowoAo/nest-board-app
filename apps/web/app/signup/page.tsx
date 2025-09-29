@@ -53,7 +53,7 @@ export default function SignupPage() {
           <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-r from-sky-400 to-indigo-400 text-white font-bold shadow-sm">
             W
           </div>
-          {/* <h1 className="text-xl font-semibold text-gray-800">LumiBoard</h1> */}
+          ㄴ{' '}
         </div>
 
         <h2 className="text-center text-2xl font-bold text-gray-900">회원가입</h2>

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useBoardById, useUpdateBoard } from '@/lib/queries';
 import type { Board } from '@/types/board';
-import { BoardStatus } from '@/types/board'; // enum 가져오기
+import { BoardStatus } from '@/types/board';
 
 export default function EditBoardPage() {
   const params = useParams<{ id: string }>();
@@ -76,7 +76,7 @@ export default function EditBoardPage() {
 
         {/* 카드 본문 */}
         <form
-          id="edit-form" // ✅ 상단 버튼과 연결
+          id="edit-form"
           onSubmit={onSubmit}
           className="rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200"
         >

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { useBoardById, useMe } from '@/lib/queries';
 import { BoardStatus } from '@/types/board';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Lock, MoreVertical } from 'lucide-react';
 
 type Board = {
