@@ -9,7 +9,7 @@ import { BoardStatus } from '@/types/board'; // enum 가져오기
 
 export default function EditBoardPage() {
   const params = useParams<{ id: string }>();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const id: string = Array.isArray(params.id) ? params.id[0] : params.id;
   const router = useRouter();
 
   const { data, isLoading, error } = useBoardById(id);
